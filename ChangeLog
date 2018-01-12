@@ -1,3 +1,7 @@
+2018-01-12 Ali Polatel <alip@adjust.com> (1.6.0.1)
+  * create_host: fix readding host entries already present in hosts - Ali Polatel
+  * Revert (breaks hooks): fix bug with before => ALL in modules - Joachim Bargsten
+  * Revert (breaks needs): use Task::run() method to call the task code. - Jan Gehring
 2017-12-03 Jan Gehring <jfried@rexify.org> (1.6.0)
   * Check brctl command is available (resolves #1115) - perlancar
   * fixed path bug in git scm checkout - Joachim Bargsten
