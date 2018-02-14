@@ -672,13 +672,14 @@ sub import {
       if ( $add =~ m/^(\d+\.\d+)$/ ) {
         my $vers = $1;
         my ( $major, $minor, $patch, $dev_release ) =
-          $Rex::VERSION =~ m/^(\d+)\.(\d+)\.(\d+)_?(\d+)?$/;
+          $Rex::VERSION =~ m/^(\d+)\.(\d+)\.(\d+)[\._]?(\d+)?$/;
 
         my ( $c_major, $c_minor ) = split( /\./, $vers );
+        $dev_release = "sex";
 
-        if ( defined $dev_release && $c_major == $major && $c_minor > $minor ) {
+        if ( defined $dev_release ) { # && $c_major == $major && $c_minor > $minor ) {
           Rex::Logger::info(
-            "This is development release $Rex::VERSION of Rex. Enabling experimental feature flag for $vers.",
+            "This is development release $Rex::VERSION of (S)!ex. Feature checks are disabled for $vers until done right.",
             "warn"
           );
         }
