@@ -27,6 +27,9 @@ sub new {
   my $self  = {@_};
 
   $self->{merger} = Hash::Merge->new();
+  # file => Hash for each YAML::Load($file)
+  # file => undef if file is non-existent.
+  $self->{loaded} = {};
 
   if ( !defined $self->{merge_behavior} ) {
     $self->{merger}->specify_behavior(
@@ -109,18 +112,27 @@ sub get {
   $template_vars{environment} = Rex::Commands::environment();
 
   for my $file (@files) {
-    Rex::Logger::debug("CMDB - Opening $file");
-    if ( -f $file ) {
+    my $yaml;
+
+    if ( exists $self->{loaded}->{$file} ) {
+      $yaml = $self->{loaded}->{$file};
+    } elsif ( -f $file ) {
+      Rex::Logger::debug("CMDB - Opening $file");
 
       my $content = eval { local ( @ARGV, $/ ) = ($file); <>; };
       my $t = Rex::Config->get_template_function();
       $content .= "\n"; # for safety
       $content = $t->( $content, \%template_vars );
 
-      my $ref = YAML::Load($content);
+      $yaml = YAML::Load($content);
+      $self->{loaded}->{$file} = $yaml;
 
-      $all = $self->{merger}->merge( $all, $ref );
+    } else {
+      $self->{loaded}->{$file} = undef; # ENOENT.
     }
+
+    next unless defined $yaml; # Nothing to merge, move on.
+    $all = $self->{merger}->merge( $all, $yaml );
   }
 
   if ( !$item ) {

@@ -112,6 +112,20 @@ Rex::Config->register_set_handler(
       }
     }
 
+    my $klass = $option->{type};
+    if ( $klass ) {
+        if ( $klass !~ m/::/ ) {
+          $klass = "Rex::CMDB::$klass";
+        }
+
+        eval "use $klass";
+        if ($@) {
+          die("CMDB provider ($klass) not found: $@");
+        }
+
+        $option->{cmdb} = $klass->new( %{$option} );
+    }
+
     $CMDB_PROVIDER = $option;
   }
 );
@@ -131,24 +145,12 @@ sub cmdb {
   my ( $item, $server ) = @_;
   $server ||= connection->server;
 
-  my $klass = $CMDB_PROVIDER->{type};
-
-  if ( !$klass ) {
-
-    # no cmdb set
-    return;
+  my $cmdb = $CMDB_PROVIDER->{cmdb};
+  if (!$cmdb) {
+      # no cmdb set.
+      return;
   }
 
-  if ( $klass !~ m/::/ ) {
-    $klass = "Rex::CMDB::$klass";
-  }
-
-  eval "use $klass";
-  if ($@) {
-    die("CMDB provider ($klass) not found: $@");
-  }
-
-  my $cmdb = $klass->new( %{$CMDB_PROVIDER} );
   return Rex::Value->new( value => ( $cmdb->get( $item, $server ) || undef ) );
 }
 
