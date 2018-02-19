@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 18;
 
 use Rex::CMDB;
 use Rex::Commands;
@@ -102,3 +102,51 @@ is_deeply(
   },
   "DeepMerge CMDB"
 );
+
+set(
+  cmdb => {
+    type           => "YAML",
+    path           => [
+        "t/cmdb/refs/scalar.yml",
+        "t/cmdb/refs/[machine.defaults].yml"
+    ],
+    merge_behavior => 'LEFT_PRECEDENT',
+  }
+);
+
+my $bar = get cmdb 'foo';
+ok($bar eq 'bar', "machine.defaults invalid: expected 'bar', got '$bar'");
+
+set(
+  cmdb => {
+    type           => "YAML",
+    path           => [
+        "t/cmdb/refs/array.yml",
+        "t/cmdb/refs/[roles].yml"
+    ],
+    merge_behavior => 'LEFT_PRECEDENT',
+  }
+);
+
+my $role_foo = get cmdb 'role_foo';
+ok($role_foo eq 'ok', "role_foo invalid: expected 'ok', got '$role_foo'");
+
+my $role_bar = get cmdb 'role_bar';
+ok($role_bar eq 'ok', "role_bar invalid: expected 'ok', got '$role_bar'");
+
+my $role = get cmdb 'role';
+ok($role eq 'foo', "role invalid (merge order invalid): expected 'foo', got '$role'");
+
+set(
+  cmdb => {
+    type           => "YAML",
+    path           => [
+        "t/cmdb/refs/array.yml",
+        "t/cmdb/refs/[roles].yml"
+    ],
+    merge_behavior => 'RIGHT_PRECEDENT',
+  }
+);
+
+my $role = get cmdb 'role';
+ok($role eq 'bar', "role invalid (merge order invalid): expected 'bar', got '$role'");
