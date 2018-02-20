@@ -1,3 +1,7 @@
+2018-02-19 Ali Polatel <alip@adjust.com> (1.6.0.2)
+  * new feature, YAML references in CMDB pathnames
+  * fix cmdb loader not to repeatedly read & parse cmdb files
+  * honour adjust patch level
 2018-01-12 Ali Polatel <alip@adjust.com> (1.6.0.1)
   * create_host: fix readding host entries already present in hosts - Ali Polatel
   * Revert (breaks hooks): fix bug with before => ALL in modules - Joachim Bargsten
