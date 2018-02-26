@@ -95,7 +95,7 @@ sub __run__ {
     Rex::Config->set_use_cache(0);
   }
 
-  Rex::Logger::debug("This is Rex version: $Rex::VERSION");
+  Rex::Logger::debug("This is Sex version: $Rex::VERSION");
   Rex::Logger::debug("Command Line Parameters");
   for my $param ( keys %opts ) {
     Rex::Logger::debug( "\t$param = " . $opts{$param} );
@@ -442,7 +442,7 @@ sub __help__ {
   printf $fmt, "-s", "Use sudo for every command";
   printf $fmt, "-S", "Password for sudo";
   printf $fmt, "-t", "Number of threads to use (aka 'parallelism' param)";
-  printf $fmt, "-v", "Display (R)?ex version";
+  printf $fmt, "-v", "Display (S)!ex version";
   print "\n";
 
   for my $code (@help) {
@@ -464,7 +464,7 @@ sub add_exit {
 }
 
 sub __version__ {
-  print "(R)?ex " . $Rex::VERSION . "\n";
+  print "(S)!ex " . $Rex::VERSION . "\n";
   CORE::exit 0;
 }
 
