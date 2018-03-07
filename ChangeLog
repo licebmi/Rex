@@ -1,3 +1,5 @@
+2018-03-07 Ali Polatel <alip@adjust.com> (1.6.0.3)
+  * delete_host: fix regex to prevent deletion of multiple entries by prefix - Ali Polatel
 2018-02-19 Ali Polatel <alip@adjust.com> (1.6.0.2)
   * new feature, YAML references in CMDB pathnames
   * fix cmdb loader not to repeatedly read & parse cmdb files
