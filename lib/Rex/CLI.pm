@@ -95,7 +95,7 @@ sub __run__ {
     Rex::Config->set_use_cache(0);
   }
 
-  Rex::Logger::debug("This is Sex version: $Rex::VERSION");
+  Rex::Logger::debug("This is $Rex::NAME version: $Rex::VERSION");
   Rex::Logger::debug("Command Line Parameters");
   for my $param ( keys %opts ) {
     Rex::Logger::debug( "\t$param = " . $opts{$param} );
@@ -404,8 +404,8 @@ sub __help__ {
   my $fmt = "  %-6s %s\n";
 
   print "usage: \n";
-  print "  rex [<options>] [-H <host>] [-G <group>] <task> [<task-options>]\n";
-  print "  rex -T[m|y|v] [<string>]\n";
+  print "  " . basename($0) . " [<options>] [-H <host>] [-G <group>] <task> [<task-options>]\n";
+  print "  " . basename($0) . " -T[m|y|v] [<string>]\n";
   print "\n";
   printf $fmt, "-b",    "Run batch";
   printf $fmt, "-e",    "Run the given code fragment";
@@ -442,7 +442,7 @@ sub __help__ {
   printf $fmt, "-s", "Use sudo for every command";
   printf $fmt, "-S", "Password for sudo";
   printf $fmt, "-t", "Number of threads to use (aka 'parallelism' param)";
-  printf $fmt, "-v", "Display (S)!ex version";
+  printf $fmt, "-v", "Display $Rex::DISPLAYNAME version";
   print "\n";
 
   for my $code (@help) {
@@ -464,7 +464,7 @@ sub add_exit {
 }
 
 sub __version__ {
-  print "(S)!ex " . $Rex::VERSION . "\n";
+  print $Rex::DISPLAYNAME . " " . $Rex::VERSION . "\n";
   CORE::exit 0;
 }
 

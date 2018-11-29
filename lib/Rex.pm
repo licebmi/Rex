@@ -74,6 +74,11 @@ package Rex;
 use strict;
 use warnings;
 
+# NAME
+
+$Rex::DISPLAYNAME = "T(R)?ex";
+$Rex::NAME = "TRex";
+
 # VERSION
 
 # development version if this variable is not set
@@ -675,11 +680,11 @@ sub import {
           $Rex::VERSION =~ m/^(\d+)\.(\d+)\.(\d+)[\._]?(\d+)?$/;
 
         my ( $c_major, $c_minor ) = split( /\./, $vers );
-        $dev_release = "sex";
+        $dev_release = "trex";
 
         if ( defined $dev_release ) { # && $c_major == $major && $c_minor > $minor ) {
           Rex::Logger::info(
-            "This is development release $Rex::VERSION of (S)!ex. Feature checks are disabled for $vers until done right.",
+            "This is a development release $Rex::VERSION of $Rex::DISPLAYNAME. Feature checks are disabled for $vers until done right.",
             "warn"
           );
         }
