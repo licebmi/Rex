@@ -92,6 +92,12 @@ sub connect {
     push @ssh_opts_line, "-o" => $key . "=" . $ssh_opts{$key};
   }
 
+  my @rex_openssh_opts = Rex::Config->get_rex_openssh_opt();
+
+  if ( $rex_openssh_opts[0] != 0 ) {
+    push @ssh_opts_line, @rex_openssh_opts;
+  }
+
   my @connection_props = ( "" . $server ); # stringify server object, so that a dumper don't print out passwords.
   push @connection_props, ( user => $user, port => $port );
   push @connection_props, master_opts      => \@ssh_opts_line if @ssh_opts_line;
