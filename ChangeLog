@@ -1,3 +1,6 @@
+2019-02-25 Max E. Aubrey <max@adjust.com> (1.6.0.4)
+  * fix adjust/Rex#10: correctly matching %h placeholder in ssh config
+  * add adjust/Rex#2: adds option to pass parameters to openssh via REX_OPENSSH_OPTS
 2018-03-07 Ali Polatel <alip@adjust.com> (1.6.0.3)
   * delete_host: fix regex to prevent deletion of multiple entries by prefix - Ali Polatel
 2018-02-19 Ali Polatel <alip@adjust.com> (1.6.0.2)
