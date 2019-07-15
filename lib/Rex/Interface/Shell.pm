@@ -14,15 +14,16 @@ use warnings;
 use Rex::Logger;
 
 my %SHELL_PROVIDER = (
-  ash   => "Rex::Interface::Shell::Ash",
-  bash  => "Rex::Interface::Shell::Bash",
-  csh   => "Rex::Interface::Shell::Csh",
-  idrac => "Rex::Interface::Shell::Idrac",
-  ilo   => "Rex::Interface::Shell::Ilo",
-  ksh   => "Rex::Interface::Shell::Ksh",
-  sh    => "Rex::Interface::Shell::Sh",
-  tcsh  => "Rex::Interface::Shell::Tcsh",
-  zsh   => "Rex::Interface::Shell::Zsh",
+  ash        => "Rex::Interface::Shell::Ash",
+  bash       => "Rex::Interface::Shell::Bash",
+  csh        => "Rex::Interface::Shell::Csh",
+  idrac      => "Rex::Interface::Shell::Idrac",
+  ilo        => "Rex::Interface::Shell::Ilo",
+  ksh        => "Rex::Interface::Shell::Ksh",
+  sh         => "Rex::Interface::Shell::Sh",
+  supermicro => "Rex::Interface::Shell::Supermicro",
+  tcsh       => "Rex::Interface::Shell::Tcsh",
+  zsh        => "Rex::Interface::Shell::Zsh",
 );
 
 sub register_shell_provider {
