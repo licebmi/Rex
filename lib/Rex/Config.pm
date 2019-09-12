@@ -462,7 +462,7 @@ sub get_user {
     return getlogin;
   }
   else {
-    return getpwuid($<);
+    return scalar getpwuid($<);
   }
 }
 
