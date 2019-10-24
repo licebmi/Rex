@@ -149,13 +149,31 @@ sub cmdb {
   my ( $item, $server ) = @_;
   $server ||= connection->server;
 
-  my $cmdb = $CMDB_PROVIDER->{cmdb};
-  if (!$cmdb) {
-      # no cmdb set.
-      return;
+  return if !cmdb_active();
+
+  my $value;
+  my $cache     = Rex::get_cache();
+  my $cache_key = "cmdb/$CMDB_PROVIDER/$server";
+
+  if ( $cache->valid($cache_key) ) {
+    $value = $cache->get($cache_key);
+  }
+  else {
+    $value = $CMDB_PROVIDER->get( undef, $server ) || undef;
+    $cache->set( $cache_key, $value );
   }
 
-  return Rex::Value->new( value => ( $cmdb->get( $item, $server ) || undef ) );
+  if ($item) {
+    $value = $value->{$item};
+  }
+
+  if ( defined $value ) {
+    return Rex::Value->new( value => $value );
+  }
+  else {
+    Rex::Logger::debug("CMDB - no item ($item) found");
+    return;
+  }
 }
 
 sub cmdb_active {

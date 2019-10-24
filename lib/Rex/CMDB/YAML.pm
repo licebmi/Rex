@@ -27,9 +27,6 @@ sub new {
   my $self  = {@_};
 
   $self->{merger} = Hash::Merge->new();
-  # file => Hash for each YAML::Load($file)
-  # file => undef if file is non-existent.
-  $self->{loaded} = {};
 
   if ( !defined $self->{merge_behavior} ) {
     $self->{merger}->specify_behavior(
@@ -111,107 +108,22 @@ sub get {
   }
   $template_vars{environment} = Rex::Commands::environment();
 
-  for my $filespec (@files) {
-    for my $file ($self->_expand_yaml_refs($filespec, $all)) {
-      my $yaml = $self->_load($file, \%template_vars);
-      next unless defined $yaml; # Nothing to merge, move on.
-      $all = $self->{merger}->merge( $all, $yaml );
-    }
-  }
-
-  if ( !$item ) {
-    return $all;
-  }
-  else {
-    return $all->{$item};
-  }
-
-  Rex::Logger::debug("CMDB - no item ($item) found");
-
-  return;
-}
-
-sub _load {
-    my ( $self, $file, $template_vars ) = @_;
-    my $yaml;
-
-    if ( exists $self->{loaded}->{$file} ) {
-      $yaml = $self->{loaded}->{$file};
-    } elsif ( -f $file ) {
-      Rex::Logger::debug("CMDB - Opening $file");
+  for my $file (@files) {
+    Rex::Logger::debug("CMDB - Opening $file");
+    if ( -f $file ) {
 
       my $content = eval { local ( @ARGV, $/ ) = ($file); <>; };
       my $t = Rex::Config->get_template_function();
       $content .= "\n"; # for safety
-      $content = $t->( $content, $template_vars );
+      $content = $t->( $content, \%template_vars );
 
-      $yaml = YAML::Load($content);
-      $self->{loaded}->{$file} = $yaml;
+      my $ref = YAML::Load($content);
 
-    } else {
-      $self->{loaded}->{$file} = undef; # ENOENT.
+      $all = $self->{merger}->merge( $all, $ref );
     }
+  }
 
-    return $yaml;
-}
-
-# Parse YAML references in CMDB paths using the given hashref.
-# _parse_refs("cmdb/defaults/[machine.defaults].yml",
-#             {machine => {defaults => "foo"}}) = ["cmdb/defaults/foo.yml"]
-# References to strings and arrays of strings are supported.
-# Returns a list of path names with references expanded.
-# TODO: Move this to Rex::Helper::Path
-# TODO: `$self` is not really necessary for the two subroutines below.
-sub _expand_yaml_refs {
-    my ( $self, $filespec, $yaml ) = @_;
-    my @files;
-    my %refmap;
-
-    # Step 1: Replace SCALAR references, map the ARRAYs.
-    my $spec = $filespec;
-    for my $refspec ($filespec =~ /\[([^\]]+)\]/g) {
-      my $refval = $self->_expand_yaml_ref($refspec, $yaml);
-      my $reftyp = ref $refval;
-
-      if ($reftyp eq '') { # SCALAR
-        $spec =~ s/\[\Q$refspec\E\]/$refval/g;
-      } elsif ($reftyp eq 'ARRAY') {
-        $refmap{$refspec} = $refval;
-      }
-    }
-
-    # Step 2: Replace ARRAY references, populate @files.
-    push @files, $spec;
-    for my $refspec (keys %refmap) {
-      my @out;
-
-      for my $refent (@{$refmap{$refspec}}) {
-        my @expand = map { $_ =~ s/\[\Q$refspec\E\]/$refent/gr; } @files;
-        push @out, @expand;
-      }
-
-      @files = @out;
-    }
-
-    return @files;
-}
-
-sub _expand_yaml_ref {
-    my ( $self, $refspec, $yaml ) = @_;
-
-    return $refspec unless defined $yaml;
-
-    my $refval = $yaml;
-    for my $part ( split /\./, $refspec ) {
-      return $refspec unless exists $refval->{$part};
-      $refval = $refval->{$part};
-    }
-
-    my $reftyp = ref $refval;
-
-    # Return the original string unless all references were resolved
-    # either to a SCALAR or ARRAY.
-    return $reftyp =~ /\A(|ARRAY)/ ? $refval : $refspec;
+  return $all;
 }
 
 1;
