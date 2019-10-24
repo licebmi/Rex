@@ -113,20 +113,24 @@ Rex::Config->register_set_handler(
     }
 
     my $klass = $option->{type};
-    if ( $klass ) {
-        if ( $klass !~ m/::/ ) {
-          $klass = "Rex::CMDB::$klass";
-        }
 
-        eval "use $klass";
-        if ($@) {
-          die("CMDB provider ($klass) not found: $@");
-        }
+    if ( !$klass ) {
 
-        $option->{cmdb} = $klass->new( %{$option} );
+      # no cmdb set
+      return;
     }
 
-    $CMDB_PROVIDER = $option;
+    if ( $klass !~ m/::/ ) {
+      $klass = "Rex::CMDB::$klass";
+    }
+
+    eval "use $klass";
+
+    if ($@) {
+      die("CMDB provider ($klass) not found: $@");
+    }
+
+    $CMDB_PROVIDER = $klass->new( %{$option} );
   }
 );
 
